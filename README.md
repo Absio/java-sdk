@@ -24,6 +24,14 @@ Through maven you can include the SDK dependency.
         <dependency>
             <groupId>com.absio</groupId>
             <artifactId>absio-sdk</artifactId>
+            <version>*version number*</version>
+        </dependency>
+~~~
+For 1.0.2 it would be
+~~~
+        <dependency>
+            <groupId>com.absio</groupId>
+            <artifactId>absio-sdk</artifactId>
             <version>1.0.2</version>
         </dependency>
 ~~~
@@ -134,7 +142,7 @@ byte[] signatureBytes = helper.verify(publicKey, dataBytes, signatureBytes);
 You can find the [Java SDK API documentation](https://absio.github.io/java-sdk/) on GitHub.
 
 ## Library
-You can find the [Java SDK](#todo) on maven.
+You can find the [Java SDK](https://nexus.absio.com/#browse/browse:maven-releases:com%2Fabsio%2Fabsio-sdk) on maven.
 
 # Support
 
