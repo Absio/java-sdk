@@ -153,7 +153,7 @@ You can find the [Java SDK API documentation](https://absio.github.io/java-sdk/)
 ## Library
 You can find the platform independent [Java SDK](https://nexus.absio.com/#browse/browse:maven-releases:com%2Fabsio%2Fabsio-sdk) on that Absio Nexus.  If you would like a combined jar (with all dependencies) that is platfrom dependent) you can also pull those down from the Absio Nexus.
 
-[32 bit combined Java SDK](https://nexus.absio.com/#browse/browse:maven-releases:com%2Fabsio%2Fabsio-sdk-win32)
+[32 bit combined Java SDK](https://nexus.absio.com/#browse/browse:maven-releases:com%2Fabsio%2Fabsio-sdk-win32)<br>
 [64 bit combined Java SDK](https://nexus.absio.com/#browse/browse:maven-releases:com%2Fabsio%2Fabsio-sdk-win64)
 
 # Support
