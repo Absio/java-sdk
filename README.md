@@ -24,7 +24,7 @@ Through maven you can include the SDK dependency.
         <dependency>
             <groupId>com.absio</groupId>
             <artifactId>absio-sdk</artifactId>
-            <version>*version number*</version>
+            <version>SDK_VERSION_NUMBER</version>
         </dependency>
 ~~~
 For 1.0.2 it would be
