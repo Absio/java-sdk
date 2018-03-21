@@ -24,9 +24,26 @@ Through maven you can include the SDK dependency.
         <dependency>
             <groupId>com.absio</groupId>
             <artifactId>absio-sdk</artifactId>
+            <version>SDK_VERSION_NUMBER</version>
+        </dependency>
+~~~
+For 1.0.2 it would be
+~~~
+        <dependency>
+            <groupId>com.absio</groupId>
+            <artifactId>absio-sdk</artifactId>
             <version>1.0.2</version>
         </dependency>
 ~~~
+
+This will only work if you also reference the Absio Nexus.
+~~~
+        <repository>
+            <id>absio-nexus</id>
+            <url>https://nexus.absio.com/repository/maven-releases/</url>
+        </repository>
+~~~
+
 
 ## Symmetric Features
 The SDK will perform symmetric key generation, encryption and decryption.  By default the SDK will use AES 256.
@@ -134,7 +151,10 @@ byte[] signatureBytes = helper.verify(publicKey, dataBytes, signatureBytes);
 You can find the [Java SDK API documentation](https://absio.github.io/java-sdk/) on GitHub.
 
 ## Library
-You can find the [Java SDK](#todo) on maven.
+You can find the platform independent [Java SDK](https://nexus.absio.com/#browse/browse:maven-releases:com%2Fabsio%2Fabsio-sdk) on that Absio Nexus.  If you would like a combined jar (with all dependencies) that is platfrom dependent) you can also pull those down from the Absio Nexus.
+
+[32 bit combined Java SDK](https://nexus.absio.com/#browse/browse:maven-releases:com%2Fabsio%2Fabsio-sdk-win32)<br>
+[64 bit combined Java SDK](https://nexus.absio.com/#browse/browse:maven-releases:com%2Fabsio%2Fabsio-sdk-win64)
 
 # Support
 
