@@ -37,10 +37,12 @@ For 1.0.2 it would be
 ~~~
 
 This will only work if you also reference the Absio Nexus.
+~~~
         <repository>
             <id>absio-nexus</id>
             <url>https://nexus.absio.com/repository/maven-releases/</url>
         </repository>
+~~~
 
 
 ## Symmetric Features
