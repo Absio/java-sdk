@@ -170,3 +170,6 @@ Please use the relevant [GitHub](https://github.com/Absio/) Issue Tracker to rep
 
 # License
 Visit the Absio documentation website to read the [Software License Agreement](http://docs.absio.com/#licenselicense).
+
+# Third-Party Library Licenses
+A list of all licenses for third-party dependencies can be found on our [Github](https://github.com/Absio/java-sdk/tree/licenses/licenses).

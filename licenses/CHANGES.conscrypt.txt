@@ -1,0 +1,1 @@
+* Changed OpenSSLECPublicKey and OpenSSLECPrivateKey to public to expose Private->Public conversion methods
