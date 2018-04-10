@@ -25,7 +25,7 @@ This SDK was written with the Java 7 language level, but was tested exclusively 
 Java uses the JCE to perform all cryptographic operations.  The SDK requires one modification to the JDK/JRE being used (for the JCE) as well as one initialization to ensure the JCE Absio depends on is used.
 
 #### Java Cryptography Extension (JCE) Unlimited Strength
-in order to use the SDK to perform any cryptography, the JDK/JRE must be updated for the [Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files](http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html)(this is for JDK 1.8).
+In order to use the SDK to perform any cryptography, the JDK/JRE must be updated for the [Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files](http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html)(this is for JDK 1.8).
 
 #### Absio's Required JCE
 The SDK depends on the OpenSSLProvider from Conscrypt as the JCE.  It is set by simply calling
