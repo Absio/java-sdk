@@ -7,10 +7,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import java.security.Security;
 
 @SpringBootApplication
-public class ExamplesApplication {
+public class UserManagementShell {
 
     public static void main(String[] args) {
         Security.insertProviderAt(new OpenSSLProvider(), 1);
-        SpringApplication.run(ExamplesApplication.class, args);
+        SpringApplication.run(UserManagementShell.class, args);
     }
 }
