@@ -13,14 +13,15 @@ In order to use the SDK to perform any cryptography, the JDK/JRE must be updated
 Since there is no easy way to enter or display binary data, most of the inputs/output will either allow for HEX or files (input/output)
 
 ## Running
-Make sure you have a 32 or 64 bit version of Java 8 installed.  Download the appropriate version of the SDK from the [Absio Nexus](https://nexus.absio.com/):<br>
-Build the application from the source code
+Make sure you have a 32 or 64 bit version of Java 8 installed.  Download the appropriate version of the SDK from the [Absio Nexus](https://nexus.absio.com/).<br>
+
+Build the sample application from the source code:
 ```
 mvn clean install
 ```
 Gather all dependency JARs:
-* [32 bit combined Java SDK](https://nexus.absio.com/#browse/browse:maven-releases:com%2Fabsio%2Fabsio-sdk-win32) or [64 bit combined Java SDK](https://nexus.absio.com/#browse/browse:maven-releases:com%2Fabsio%2Fabsio-sdk-win64)<br>
-* [UiDesigner Jar](http://central.maven.org/maven2/com/intellij/forms_rt/7.0.3/forms_rt-7.0.3.jar)<br><br>
+* [32 bit combined Java SDK](https://nexus.absio.com/#browse/browse:maven-releases:com%2Fabsio%2Fabsio-sdk-win32) or [64 bit combined Java SDK](https://nexus.absio.com/#browse/browse:maven-releases:com%2Fabsio%2Fabsio-sdk-win64)
+* [UiDesigner Jar](http://central.maven.org/maven2/com/intellij/forms_rt/7.0.3/forms_rt-7.0.3.jar)
 * key-management-app-0.0.1-SNAPSHOT.jar
 Take all artifacts and copy into the same directory. Then run with the following command:
 ```

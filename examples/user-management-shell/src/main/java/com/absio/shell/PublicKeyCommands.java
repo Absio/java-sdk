@@ -21,7 +21,7 @@ public class PublicKeyCommands {
 
     @ShellMethod("Retrieve a user's public key by type and index.")
     public String getPublicKeyByIndex(String userId, String keyType, int index) throws InterruptedException, BrokerException, IllegalAccessException, IOException {
-        IndexedECPublicKey publicKey = AbsioServerProvider.INSTANCE.getPublicKeyIndex(UUID.fromString(userId), KeyType.findByName(keyType), index);
+        IndexedECPublicKey publicKey = AbsioServerProvider.INSTANCE.getPublicKeyByIndex(UUID.fromString(userId), KeyType.findByName(keyType), index);
 
         return publicKeyToString(publicKey);
     }
