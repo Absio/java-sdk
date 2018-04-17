@@ -1,4 +1,4 @@
-# Key Management Sample Application	
+# User Management Shell Application	
 
 ## About
 The intent of this shell application is to show how to use the key features of the Absio SDK and its use with the Absio Broker server.
