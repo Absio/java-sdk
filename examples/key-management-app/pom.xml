@@ -15,6 +15,10 @@
             <url>https://nexus.absio.com/repository/maven-releases/</url>
         </repository>
         <repository>
+            <id>absio-intnexus-stage</id>
+            <url>https://intnexus.absio.com/repository/maven-stage/</url>
+        </repository>
+        <repository>
             <id>absio-intnexus</id>
             <url>https://intnexus.absio.com/repository/maven-snapshots/</url>
         </repository>
