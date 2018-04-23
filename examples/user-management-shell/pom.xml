@@ -8,7 +8,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>examples</name>
+	<name>user-management-shell</name>
 	<description>Demo project for Spring Boot</description>
 
 	<parent>
@@ -22,6 +22,10 @@
 		<repository>
 			<id>absio-nexus</id>
 			<url>https://nexus.absio.com/repository/maven-releases/</url>
+		</repository>
+		<repository>
+			<id>absio-intnexus-stage</id>
+			<url>https://intnexus.absio.com/repository/maven-stage/</url>
 		</repository>
 		<repository>
 			<id>absio-intnexus</id>
@@ -39,7 +43,7 @@
 		<dependency>
 			<groupId>com.absio</groupId>
 			<artifactId>absio-sdk</artifactId>
-			<version>1.2.0-SNAPSHOT</version>
+			<version>1.2.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.conscrypt</groupId>

@@ -4,13 +4,9 @@
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>com.absio</groupId>
-        <artifactId>absio-sdk-parent</artifactId>
-        <version>1.2.0-SNAPSHOT</version>
-    </parent>
-
+    <groupId>com.absio</groupId>
     <artifactId>key-management-app</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <repositories>
@@ -42,9 +38,21 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.7.0</version>
                 <configuration>
                     <source>1.6</source>
                     <target>1.6</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.absio.crypto.KeyManagementSampleApplication</mainClass>
+                        </manifest>
+                    </archive>
                 </configuration>
             </plugin>
         </plugins>
@@ -54,6 +62,7 @@
         <dependency>
             <groupId>com.intellij</groupId>
             <artifactId>forms_rt</artifactId>
+            <version>7.0.3</version>
         </dependency>
         <dependency>
             <groupId>com.absio</groupId>
@@ -63,6 +72,7 @@
         <dependency>
             <groupId>org.conscrypt</groupId>
             <artifactId>absio-conscrypt-openjdk</artifactId>
+            <version>1.0.1</version>
             <classifier>${os.detected.classifier}</classifier>
         </dependency>
     </dependencies>
