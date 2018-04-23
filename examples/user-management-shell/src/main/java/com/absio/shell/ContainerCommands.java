@@ -25,7 +25,7 @@ public class ContainerCommands {
         return AbsioServerProvider.INSTANCE.isAuthenticated() ? Availability.available() : Availability.unavailable("The session must be authenticated.");
     }
 
-    @ShellMethod(".")
+    @ShellMethod("Encrypts a file to a SecuredContainer and uploads it to the Absio Broker server.")
     public String createContainer(String file, @ShellOption(defaultValue = ShellOption.NULL) String type, @ShellOption(defaultValue = ShellOption.NULL) String header) throws Exception {
         UUID id = UUID.randomUUID();
         Metadata metadata = new Metadata(id);
@@ -50,13 +50,13 @@ public class ContainerCommands {
         return String.format("Container created successfully : %s", id.toString());
     }
 
-    @ShellMethod(".")
+    @ShellMethod("Deletes a SecuredContainer from the Absio Broker server.")
     public String deleteContainer(UUID id) throws InterruptedException, BrokerException, IllegalAccessException, IOException {
         AbsioServerProvider.INSTANCE.delete(id);
         return String.format("Container deleted successfully : %s", id);
     }
 
-    @ShellMethod(".")
+    @ShellMethod("Gets a SecuredContainer from the Absio Broker server and decrypts it to a file.")
     public Table getContainer(UUID id, String filePath) throws Exception {
         SecuredContainer securedContainer = AbsioServerProvider.INSTANCE.get(id);
 
@@ -70,7 +70,7 @@ public class ContainerCommands {
         return printMetadata(container.getMetadata());
     }
 
-    @ShellMethod(".")
+    @ShellMethod("Gets the SecuredContainer information from the Absio Broker server.")
     public Table getContainerInfo(UUID id) throws InterruptedException, BrokerException, IllegalAccessException, IOException {
         ContainerInfo info = AbsioServerProvider.INSTANCE.getInfo(id);
         System.out.println("Container : " + id);
@@ -130,7 +130,7 @@ public class ContainerCommands {
         }
     }
 
-    @ShellMethod(".")
+    @ShellMethod("Updates a SecuredContainer on the Absio Broker server with new type, header, content, or access.")
     public String updateContainer(UUID id, @ShellOption(defaultValue = ShellOption.NONE) String file, @ShellOption(defaultValue = ShellOption.NONE) String type, @ShellOption(defaultValue = ShellOption.NONE) String header) throws Exception {
         ServerProvider provider = AbsioServerProvider.INSTANCE;
 
