@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class ShellUtils {
-    public static String promptUser(String prompt) {
-        System.out.println(prompt);
+    public static String promptForString(String message) {
+        System.out.println(message);
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         String systemIn = null;
         try {
@@ -15,5 +15,10 @@ public class ShellUtils {
             e.printStackTrace();
         }
         return systemIn;
+    }
+
+    public static boolean promptForYesOrNo(String message) {
+        String response = ShellUtils.promptForString(message);
+        return response.equalsIgnoreCase("y") || response.equalsIgnoreCase("yes");
     }
 }
