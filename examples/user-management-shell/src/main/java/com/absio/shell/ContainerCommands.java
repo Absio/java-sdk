@@ -5,12 +5,14 @@ import com.absio.broker.mapper.ContainerInfo;
 import com.absio.container.*;
 import com.absio.provider.ServerProvider;
 import com.absio.util.FileUtils;
+import com.absio.util.GeneralUtils;
 import com.absio.util.StringUtils;
 import org.springframework.shell.Availability;
 import org.springframework.shell.standard.*;
 import org.springframework.shell.table.*;
 import org.threeten.bp.ZonedDateTime;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -20,16 +22,21 @@ import java.util.UUID;
 @ShellComponent
 @ShellCommandGroup("4. Container Commands")
 public class ContainerCommands {
+    public static final String FILE_TYPE = "FILE";
     @ShellMethodAvailability("*")
     public Availability containerMethodAvailabilityCheck() {
         return AbsioServerProvider.INSTANCE.isAuthenticated() ? Availability.available() : Availability.unavailable("The session must be authenticated.");
     }
 
     @ShellMethod("Encrypts a file to a SecuredContainer and uploads it to the Absio Broker server.")
-    public String createContainer(String file, @ShellOption(defaultValue = ShellOption.NULL) String type, @ShellOption(defaultValue = ShellOption.NULL) String header) throws Exception {
+    public String createContainer(String file, @ShellOption(defaultValue = FILE_TYPE) String type, @ShellOption(defaultValue = ShellOption.NULL) String header) throws Exception {
         UUID id = UUID.randomUUID();
         Metadata metadata = new Metadata(id);
         metadata.setType(type);
+        if (header == null && FILE_TYPE.equals(type)) {
+            File theFile = new File(file);
+            header = theFile.getName();
+        }
 
         ServerProvider provider = AbsioServerProvider.INSTANCE;
 
@@ -114,16 +121,20 @@ public class ContainerCommands {
             }
             UUID userId = UUID.fromString(userIdResponse);
 
-            String permissionResponse = ShellUtils.promptForString("Permission? (Default: com.absio.container.Permission.DEFAULT_USER_PERMISSIONS)");
+            String permissionResponse = ShellUtils.promptForString("Permission? (Default: com.absio.container.Permission.DEFAULT_USER_PERMISSIONS - 75)");
             int permission;
             if (!StringUtils.isEmpty(permissionResponse)) {
-                permission = Permission.valueOf(permissionResponse).getFlag();
+                permission = Integer.parseInt(permissionResponse);
             }
             else {
                 permission = Permission.DEFAULT_USER_PERMISSIONS;
             }
 
-            ZonedDateTime expiresAt = ZonedDateTime.parse(ShellUtils.promptForString("Expiration date? (Default: No expiration)"));
+            String expirationResponse = ShellUtils.promptForString("Expiration date? (Default: No expiration)");
+            ZonedDateTime expiresAt = null;
+            if (!StringUtils.isEmpty(expirationResponse)) {
+                expiresAt = ZonedDateTime.parse(expirationResponse);
+            }
 
             Access recipientAccess = new Access(userId, permission, expiresAt);
             accessList.add(recipientAccess);
@@ -131,37 +142,87 @@ public class ContainerCommands {
     }
 
     @ShellMethod("Updates a SecuredContainer on the Absio Broker server with new type, header, content, or access.")
-    public String updateContainer(UUID id, @ShellOption(defaultValue = ShellOption.NONE) String file, @ShellOption(defaultValue = ShellOption.NONE) String type, @ShellOption(defaultValue = ShellOption.NONE) String header) throws Exception {
+    public String updateContainer(UUID id, @ShellOption(defaultValue = ShellOption.NULL) String file, @ShellOption(defaultValue = ShellOption.NULL) String type, @ShellOption(defaultValue = ShellOption.NULL) String header) throws Exception {
         ServerProvider provider = AbsioServerProvider.INSTANCE;
 
         SecuredContainer serverContainer = provider.get(id);
         EncryptionHelper helper = new EncryptionHelper(provider.getKeyRing(), provider.getPublicKeyMapper());
 
         Container container = helper.decrypt(serverContainer);
+        boolean typeChanged = false;
 
-        if (!type.equals(ShellOption.NONE)) {
-            container.getMetadata().setType(type);
+        if (file != null) {
+            if (type == null) {
+                type = FILE_TYPE;
+            }
+            if (header == null) {
+                File theFile = new File(file);
+                header = theFile.getName();
+            }
         }
 
-        if (!file.equals(ShellOption.NONE)) {
+        Metadata metadata = container.getMetadata();
+        if (type != null && !type.equals(ShellOption.NONE) && !GeneralUtils.equals(metadata.getType(), type)) {
+            typeChanged = true;
+            metadata.setType(type);
+        }
+
+        if (file != null && !file.equals(ShellOption.NONE)) {
             container.setContent(FileUtils.readBytesFromFile(file));
         }
 
-        if (!header.equals(ShellOption.NONE)) {
+        if (header != null && !header.equals(ShellOption.NONE)) {
             container.setCustomData(header);
         }
 
-        if (ShellUtils.promptForYesOrNo("Change recipients? Yes/No")) {
+        boolean changeAccess = ShellUtils.promptForYesOrNo("Change recipients? Yes/No");
+        Keys keys = null;
+        if (changeAccess) {
+            keys = helper.findSecuredContainerKeys(serverContainer.getMetadata());
             List<Access> accessList = new ArrayList<>();
-            Access selfAccess = new Access(provider.getUserId(), Permission.DEFAULT_OWNER_PERMISSIONS);
-            accessList.add(selfAccess);
             promptForAccessList(accessList);
-            container.getMetadata().setAccesses(accessList);
+            if (!accessListContainsUser(accessList, provider.getUserId())) {
+                Access selfAccess = new Access(provider.getUserId(), Permission.DEFAULT_OWNER_PERMISSIONS);
+                accessList.add(selfAccess);
+            }
+            metadata.setAccesses(accessList);
         }
 
-        SecuredContainer securedContainer = helper.encrypt(container);
+        SecuredContainer securedContainer = null;
 
-        AbsioServerProvider.INSTANCE.createOrUpdate(securedContainer);
+        if (file != null) {
+            securedContainer = helper.encrypt(container);
+        }
+        else if (changeAccess) {
+            helper.initializeAccessLevelsKeyBlobAsync(metadata.getAccesses(), id, keys);
+        }
+
+        if (file != null && changeAccess) {
+            AbsioServerProvider.INSTANCE.createOrUpdate(securedContainer);
+        }
+        else {
+            if (typeChanged) {
+                AbsioServerProvider.INSTANCE.updateType(id, type);
+            }
+            if (changeAccess) {
+                AbsioServerProvider.INSTANCE.updateAccess(id, metadata.getAccesses());
+            }
+            if (file != null) {
+                AbsioServerProvider.INSTANCE.updateData(securedContainer);
+            }
+        }
         return String.format("Container updated successfully : %s", id.toString());
+    }
+
+    private boolean accessListContainsUser(List<Access> accessList, UUID userId) {
+        if (accessList != null) {
+            for (Access access : accessList) {
+                if (GeneralUtils.equals(userId, access.getUserId())) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

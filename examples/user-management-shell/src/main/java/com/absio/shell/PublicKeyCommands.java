@@ -20,8 +20,8 @@ public class PublicKeyCommands {
     }
 
     @ShellMethod("Retrieve a user's public key by type and index.")
-    public String getPublicKeyByIndex(String userId, String keyType, int index) throws InterruptedException, BrokerException, IllegalAccessException, IOException {
-        IndexedECPublicKey publicKey = AbsioServerProvider.INSTANCE.getPublicKeyByIndex(UUID.fromString(userId), KeyType.findByName(keyType), index);
+    public String getPublicKeyByIndex(String userId, @ShellOption(help = "{Signing | Derivation}") KeyType keyType, int index) throws InterruptedException, BrokerException, IllegalAccessException, IOException {
+        IndexedECPublicKey publicKey = AbsioServerProvider.INSTANCE.getPublicKeyByIndex(UUID.fromString(userId), keyType, index);
 
         return publicKeyToString(publicKey);
     }
@@ -31,17 +31,16 @@ public class PublicKeyCommands {
     }
 
     @ShellMethod("Retrieve a user's latest active key by type.")
-    public String getPublicKeyLatestActive(String userId, String keyType) throws InterruptedException, BrokerException, IllegalAccessException, IOException {
-        IndexedECPublicKey publicKey = AbsioServerProvider.INSTANCE.getPublicKeyLatestActive(UUID.fromString(userId), KeyType.findByName(keyType));
+    public String getPublicKeyLatestActive(String userId, @ShellOption(help = "{Signing | Derivation}") KeyType keyType) throws InterruptedException, BrokerException, IllegalAccessException, IOException {
+        IndexedECPublicKey publicKey = AbsioServerProvider.INSTANCE.getPublicKeyLatestActive(UUID.fromString(userId), keyType);
 
         return publicKeyToString(publicKey);
     }
 
     @ShellMethod("Retrieves a list of public keys filterable by user, type, and index.")
-    public String getPublicKeyList(@ShellOption(defaultValue = ShellOption.NULL) String userId, @ShellOption(defaultValue = ShellOption.NULL) String keyType, @ShellOption(defaultValue = ShellOption.NULL) Integer index) throws InterruptedException, BrokerException, IllegalAccessException, IOException {
+    public String getPublicKeyList(@ShellOption(defaultValue = ShellOption.NULL) String userId, @ShellOption(defaultValue = ShellOption.NULL, help = "{Signing | Derivation}") KeyType keyType, @ShellOption(defaultValue = ShellOption.NULL) Integer index) throws InterruptedException, BrokerException, IllegalAccessException, IOException {
         UUID userUUID = userId != null ? UUID.fromString(userId) : null;
-        KeyType type = keyType != null ? KeyType.findByName(keyType) : null;
-        List<IndexedECPublicKey> publicKeyList = AbsioServerProvider.INSTANCE.getPublicKeyList(userUUID, type, index);
+        List<IndexedECPublicKey> publicKeyList = AbsioServerProvider.INSTANCE.getPublicKeyList(userUUID, keyType, index);
 
         StringBuilder publicKeys = new StringBuilder();
         for (IndexedECPublicKey publicKey : publicKeyList) {
