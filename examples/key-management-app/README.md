@@ -15,7 +15,7 @@ Since there is no easy way to enter or display binary data, most of the inputs/o
 ## Compiling and Running on Windows
 
 1. Java JDK 8+
-    1. Download an install [Java JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html) 8 or higher
+    1. Download and install [Java JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html) 8 or higher
         1. If using JDK 8, install the [JCE Unlimited Strength Jurisdiction Policy Files](http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html)
     1. Create a JAVA_HOME environment variable and point it to the JDK installation folder (e.g. "C:\Program Files\Java\jdk1.8.0_161")
 1. Maven    
@@ -27,7 +27,7 @@ Since there is no easy way to enter or display binary data, most of the inputs/o
     ```
 1. Open a command line to the key-management-app directory of the java-sdk examples
     ```
-    cd <installLocaltion>\java-sdk\examples\key-management-app
+    cd <installLocation>\java-sdk\examples\key-management-app
     ```
 1. Compile the key management application JAR
     ```
