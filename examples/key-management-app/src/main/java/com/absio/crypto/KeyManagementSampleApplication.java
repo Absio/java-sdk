@@ -43,7 +43,7 @@ import java.security.interfaces.ECPublicKey;
 import java.util.UUID;
 
 public class KeyManagementSampleApplication extends JFrame {
-    public static final String CHARSET = "UTF-16";
+    public static final String CHARSET = "UTF-8";
     private final static Cursor DEFAULT_CURSOR =
             Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
     private final static Cursor WAIT_CURSOR =

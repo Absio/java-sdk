@@ -12,25 +12,35 @@ In order to use the SDK to perform any cryptography, the JDK/JRE must be updated
 ## Binary Data
 Since there is no easy way to enter or display binary data, most of the inputs/output will either allow for HEX or files (input/output)
 
-## Running
-Make sure you have a 32 or 64 bit version of Java 8 installed.  Download the appropriate version of the SDK from the [Absio Nexus](https://nexus.absio.com/).<br>
+## Compiling and Running on Windows
 
-Build the sample application from the source code:
-```
-mvn clean install
-```
-Gather all dependency JARs:
-* [32 bit combined Java SDK](https://nexus.absio.com/#browse/browse:maven-releases:com%2Fabsio%2Fabsio-sdk-win32) or [64 bit combined Java SDK](https://nexus.absio.com/#browse/browse:maven-releases:com%2Fabsio%2Fabsio-sdk-win64)
-* [UiDesigner Jar](http://central.maven.org/maven2/com/intellij/forms_rt/7.0.3/forms_rt-7.0.3.jar)
-* key-management-app-0.0.1-SNAPSHOT.jar
-Take all artifacts and copy into the same directory. Then run with the following command:
-```
-//32 Bit
-%JAVA32_HOME%/bin/java.exe -cp absio-sdk-win32-1.2.0.jar;key-management-app-0.0.1-SNAPSHOT.jar;forms_rt-7.0.3.jar com.absio.crypto.KeyManagementSampleApplication
-    
-//64 Bit
-%JAVA64_HOME%/bin/java.exe -cp absio-sdk-win64-1.2.0.jar;key-management-app-0.0.1-SNAPSHOT.jar;forms_rt-7.0.3.jar com.absio.crypto.KeyManagementSampleApplication
-```
+1. Java JDK 8+
+    1. Download and install [Java JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html) 8 or higher
+        1. If using JDK 8, install the [JCE Unlimited Strength Jurisdiction Policy Files](http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html)
+    1. Create a JAVA_HOME environment variable and point it to the JDK installation folder (e.g. "C:\Program Files\Java\jdk1.8.0_161")
+1. Maven    
+    1. Download and unpack [Maven](http://maven.apache.org/download.cgi) to a local folder
+    1. Create an M2_HOME and MAVEN_HOME environment variables and point them to your Maven folder 
+1. Download or clone the [java-sdk Github](https://github.com/Absio/java-sdk) repository
+    ```
+    git clone https://github.com/Absio/java-sdk.git
+    ```
+1. Open a command line to the key-management-app directory of the java-sdk examples
+    ```
+    cd <installLocation>\java-sdk\examples\key-management-app
+    ```
+1. Compile the key management application JAR
+    ```
+    mvn clean package
+    ```
+1. Run the key management application
+    ```
+    //32-Bit JDK
+    java -jar target/key-management-app-0.0.1-SNAPSHOT-windows_x86_32
+        
+    //64-Bit JDK
+    java -jar target/key-management-app-0.0.1-SNAPSHOT-windows_x86_64
+    ```
 
 ## Usage
 This is a Swing application with a tabbed interface.  Choose the functionality you wish to try out by selecting the relevant tab and entering the appropriate data.
