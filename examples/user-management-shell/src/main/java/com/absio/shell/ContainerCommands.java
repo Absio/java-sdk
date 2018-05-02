@@ -22,7 +22,7 @@ import java.util.UUID;
 @ShellComponent
 @ShellCommandGroup("4. Container Commands")
 public class ContainerCommands {
-    public static final String FILE_TYPE = "FILE";
+    public static final String FILE_TYPE = "File";
     @ShellMethodAvailability("*")
     public Availability containerMethodAvailabilityCheck() {
         return AbsioServerProvider.INSTANCE.isAuthenticated() ? Availability.available() : Availability.unavailable("The session must be authenticated.");
