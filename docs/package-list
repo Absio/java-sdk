@@ -1,3 +1,6 @@
+com.absio.broker
+com.absio.broker.mapper
+com.absio.container
 com.absio.crypto.cipher
 com.absio.crypto.digest
 com.absio.crypto.ecc
@@ -8,4 +11,5 @@ com.absio.crypto.keyagreement
 com.absio.crypto.mac
 com.absio.crypto.signature
 com.absio.file
+com.absio.provider
 com.absio.util
