@@ -66,7 +66,7 @@ class AbsioProvider {
                 serverCacheOfsProvider.changeCredentials(password, passphrase, reminder);
                 break;
             default:
-                throw createUnsupportedByProviderException("changeCredentials", providerType);
+                throw createUnsupportedByProviderException("changeCredentials");
         }
     }
 
@@ -82,11 +82,11 @@ class AbsioProvider {
                 serverCacheOfsProvider.createOrUpdate(container);
                 break;
             default:
-                throw createUnsupportedByProviderException("deleteUser", providerType);
+                throw createUnsupportedByProviderException("createOrUpdateContainer");
         }
     }
 
-    private IllegalAccessException createUnsupportedByProviderException(String method, ProviderType providerType) {
+    private IllegalAccessException createUnsupportedByProviderException(String method) {
         return new IllegalAccessException(String.format("The command %s is not supported by the provider type %s", method, providerType));
     }
 
@@ -102,7 +102,7 @@ class AbsioProvider {
                 serverCacheOfsProvider.delete(id);
                 break;
             default:
-                throw createUnsupportedByProviderException("deleteUser", providerType);
+                throw createUnsupportedByProviderException("deleteUser");
         }
     }
 
@@ -118,7 +118,7 @@ class AbsioProvider {
                 serverCacheOfsProvider.deleteUser();
                 break;
             default:
-                throw createUnsupportedByProviderException("deleteUser", providerType);
+                throw createUnsupportedByProviderException("deleteUser");
         }
     }
 
@@ -131,7 +131,7 @@ class AbsioProvider {
             case SERVER_CACHE_OFS:
                 return serverCacheOfsProvider.get(id);
             default:
-                throw createUnsupportedByProviderException("deleteUser", providerType);
+                throw createUnsupportedByProviderException("getContainer");
         }
     }
 
@@ -144,7 +144,7 @@ class AbsioProvider {
             case SERVER_CACHE_OFS:
                 return new ShellContainerInfo(serverCacheOfsProvider.getBrokerInfo(id));
             default:
-                throw createUnsupportedByProviderException("deleteUser", providerType);
+                throw createUnsupportedByProviderException("getContainerInfo");
         }
     }
 
@@ -155,7 +155,7 @@ class AbsioProvider {
             case SERVER_CACHE_OFS:
                 return serverCacheOfsProvider.getEvents(actionType, eventType, startingId, endingId, containerId, containerType);
             default:
-                throw createUnsupportedByProviderException("deleteUser", providerType);
+                throw createUnsupportedByProviderException("getEvents");
         }
     }
 
@@ -172,7 +172,7 @@ class AbsioProvider {
             case SERVER_CACHE_OFS:
                 return serverCacheOfsProvider.getPublicKeyByIndex(uuid, keyType, index);
             default:
-                throw createUnsupportedByProviderException("deleteUser", providerType);
+                throw createUnsupportedByProviderException("getPublicKeyByIndex");
         }
     }
 
@@ -185,7 +185,7 @@ class AbsioProvider {
             case SERVER_CACHE_OFS:
                 return serverCacheOfsProvider.getPublicKeyLatestActive(uuid, keyType);
             default:
-                throw createUnsupportedByProviderException("deleteUser", providerType);
+                throw createUnsupportedByProviderException("getPublicKeyLatestActive");
         }
     }
 
@@ -198,7 +198,7 @@ class AbsioProvider {
             case SERVER_CACHE_OFS:
                 return serverCacheOfsProvider.getPublicKeyList(userUUID, keyType, index);
             default:
-                throw createUnsupportedByProviderException("deleteUser", providerType);
+                throw createUnsupportedByProviderException("getPublicKeyList");
         }
     }
 
@@ -209,7 +209,7 @@ class AbsioProvider {
             case SERVER_CACHE_OFS:
                 return serverCacheOfsProvider.getReminder(uuid);
             default:
-                throw createUnsupportedByProviderException("getReminder", providerType);
+                throw createUnsupportedByProviderException("getReminder");
         }
     }
 
@@ -222,7 +222,7 @@ class AbsioProvider {
             case SERVER_CACHE_OFS:
                 return serverCacheOfsProvider.getUserId();
             default:
-                throw createUnsupportedByProviderException("getUserId", providerType);
+                throw createUnsupportedByProviderException("getUserId");
         }
     }
 
@@ -260,7 +260,7 @@ class AbsioProvider {
             case SERVER_CACHE_OFS:
                 return serverCacheOfsProvider.isAuthenticated();
             default:
-                throw createUnsupportedByProviderException("isAuthenticated", providerType);
+                throw createUnsupportedByProviderException("isAuthenticated");
         }
     }
 
@@ -273,7 +273,7 @@ class AbsioProvider {
             case SERVER_CACHE_OFS:
                 return serverCacheOfsProvider.isInitialized();
             default:
-                throw createUnsupportedByProviderException("isInitialized", providerType);
+                throw createUnsupportedByProviderException("isInitialized");
         }
     }
 
@@ -289,7 +289,7 @@ class AbsioProvider {
                 serverCacheOfsProvider.logIn(uuid, password, passphrase);
                 break;
             default:
-                throw createUnsupportedByProviderException("logIn", providerType);
+                throw createUnsupportedByProviderException("logIn");
         }
     }
 
@@ -305,7 +305,7 @@ class AbsioProvider {
                 serverCacheOfsProvider.logOut();
                 break;
             default:
-                throw createUnsupportedByProviderException("logOut", providerType);
+                throw createUnsupportedByProviderException("logOut");
         }
     }
 
@@ -316,7 +316,7 @@ class AbsioProvider {
             case SERVER_CACHE_OFS:
                 return serverCacheOfsProvider.needToSyncAccount(uuid);
             default:
-                throw createUnsupportedByProviderException("isAuthenticated", providerType);
+                throw createUnsupportedByProviderException("needToSyncAccount");
         }
     }
 
@@ -329,7 +329,7 @@ class AbsioProvider {
             case SERVER_CACHE_OFS:
                 return serverCacheOfsProvider.register(password, passphrase, reminder);
             default:
-                throw createUnsupportedByProviderException("register", providerType);
+                throw createUnsupportedByProviderException("register");
         }
     }
 
@@ -344,6 +344,8 @@ class AbsioProvider {
             case SERVER_CACHE_OFS:
                 serverCacheOfsProvider.updateAccess(id, accesses);
                 break;
+            default:
+                throw createUnsupportedByProviderException("updateAccess");
         }
     }
 
@@ -353,11 +355,13 @@ class AbsioProvider {
                 serverProvider.createOrUpdate(container);
                 break;
             case OFS:
-                ofsProvider.update(container.getId(), container.getContent(), container.getHeader().getCustomData(), container.getMetadata().getAccesses(), container.getMetadata().getType());
+                ofsProvider.createOrUpdate(container);
                 break;
             case SERVER_CACHE_OFS:
-                serverCacheOfsProvider.update(container.getId(), container.getContent(), container.getHeader().getCustomData(), container.getMetadata().getAccesses(), container.getMetadata().getType());
+                serverCacheOfsProvider.createOrUpdate(container);
                 break;
+            default:
+                throw createUnsupportedByProviderException("updateContainer");
         }
     }
 
@@ -372,6 +376,8 @@ class AbsioProvider {
             case SERVER_CACHE_OFS:
                 serverProvider.updateContent(id, content);
                 break;
+            default:
+                throw createUnsupportedByProviderException("updateContent");
         }
     }
 
@@ -386,6 +392,8 @@ class AbsioProvider {
             case SERVER_CACHE_OFS:
                 serverCacheOfsProvider.updateType(id, type);
                 break;
+            default:
+                throw createUnsupportedByProviderException("updateType");
         }
     }
 
