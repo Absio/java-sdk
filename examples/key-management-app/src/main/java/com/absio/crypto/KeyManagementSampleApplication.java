@@ -219,7 +219,6 @@ public class KeyManagementSampleApplication extends JFrame {
         Security.insertProviderAt(new OpenSSLProvider(), 1);
         $$$setupUI$$$();
         setContentPane(contentPane);
-        getRootPane().setDefaultButton(buttonExit);
 
         buttonExit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -234,13 +233,6 @@ public class KeyManagementSampleApplication extends JFrame {
                 onExit();
             }
         });
-
-        // call onCancel() on ESCAPE
-        contentPane.registerKeyboardAction(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onExit();
-            }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
         try {
             eccHelper = new ECCHelper(EllipticCurve.P384, AESKeyStrength.AES256);
