@@ -18,7 +18,6 @@ import com.absio.crypto.keyagreement.KeyAgreementHelper;
 import com.absio.crypto.mac.MacHelper;
 import com.absio.crypto.signature.SignatureHelper;
 import com.absio.util.ByteUtils;
-import com.absio.util.FileUtils;
 import com.absio.util.StringUtils;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
@@ -34,16 +33,17 @@ import javax.swing.text.JTextComponent;
 import javax.xml.bind.DatatypeConverter;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.*;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.util.UUID;
 
 public class KeyManagementSampleApplication extends JFrame {
-    public static final String CHARSET = "UTF-8";
+    private static final String CHARSET = "UTF-8";
     private final static Cursor DEFAULT_CURSOR =
             Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
     private final static Cursor WAIT_CURSOR =
@@ -63,7 +63,6 @@ public class KeyManagementSampleApplication extends JFrame {
     private JTextArea asymmetricPublicHere;
     private JRadioButton asymmetricPublicHereRadioButton;
     private JCheckBox asymmetricUseECCHelperCheckBox;
-    private JButton buttonCancel;
     private JButton buttonExit;
     private CipherHelper cipherHelper;
     private JPanel contentPane;
@@ -75,9 +74,6 @@ public class KeyManagementSampleApplication extends JFrame {
     private JRadioButton decryptInputHexRadioButton;
     private JTextField decryptIvHex;
     private JTextField decryptKeyHex;
-    private JRadioButton decryptKeyHexRadioButton;
-    private JTextField decryptKeyPem;
-    private JRadioButton decryptKeyPemRadioButton;
     private JTextField decryptOutputFile;
     private JButton decryptOutputFileButton;
     private JRadioButton decryptOutputFileRadioButton;
@@ -218,7 +214,7 @@ public class KeyManagementSampleApplication extends JFrame {
     private JTextField verified;
     private JButton verifyButton;
 
-    public KeyManagementSampleApplication() {
+    private KeyManagementSampleApplication() {
         super("Key Management Application");
         Security.insertProviderAt(new OpenSSLProvider(), 1);
         $$$setupUI$$$();
@@ -268,16 +264,7 @@ public class KeyManagementSampleApplication extends JFrame {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         }
-        catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        catch (InstantiationException e) {
-            e.printStackTrace();
-        }
-        catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        catch (UnsupportedLookAndFeelException e) {
+        catch (ClassNotFoundException | UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException e) {
             e.printStackTrace();
         }
         KeyManagementSampleApplication frame = new KeyManagementSampleApplication();
@@ -316,7 +303,7 @@ public class KeyManagementSampleApplication extends JFrame {
         final JPanel panel3 = new JPanel();
         panel3.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         contentPane.add(panel3, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        tabbedPane1 = new JTabbedPane();
+        JTabbedPane tabbedPane1 = new JTabbedPane();
         panel3.add(tabbedPane1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(700, 600), new Dimension(700, 600), null, 0, false));
         final JPanel panel4 = new JPanel();
         panel4.setLayout(new GridLayoutManager(4, 2, new Insets(0, 0, 0, 0), -1, -1));
@@ -675,7 +662,7 @@ public class KeyManagementSampleApplication extends JFrame {
         gbc.gridy = 1;
         gbc.anchor = GridBagConstraints.WEST;
         panel6.add(label11, gbc);
-        iesOutput = new JPanel();
+        JPanel iesOutput = new JPanel();
         iesOutput.setLayout(new GridBagLayout());
         tabbedPane1.addTab("IES", iesOutput);
         final JLabel label12 = new JLabel();
@@ -1318,7 +1305,7 @@ public class KeyManagementSampleApplication extends JFrame {
         gbc.gridy = 4;
         gbc.anchor = GridBagConstraints.NORTHWEST;
         panel9.add(asymmetricUseECCHelperCheckBox, gbc);
-        thePanel = new JPanel();
+        JPanel thePanel = new JPanel();
         thePanel.setLayout(new GridBagLayout());
         tabbedPane1.addTab("ECDH", thePanel);
         final JLabel label31 = new JLabel();
@@ -1696,13 +1683,13 @@ public class KeyManagementSampleApplication extends JFrame {
                 asymmetricPublicHere.setText(publicPem);
             }
             else {
-                FileUtils.writeToFile(asymmetricPublicFile.getText(), publicPem.getBytes());
+                writeToFile(asymmetricPublicFile.getText(), publicPem.getBytes());
             }
             if (privateHere) {
                 asymmetricPrivateHere.setText(privatePem);
             }
             else {
-                FileUtils.writeToFile(asymmetricPrivateFile.getText(), privatePem.getBytes());
+                writeToFile(asymmetricPrivateFile.getText(), privatePem.getBytes());
             }
         }
         catch (Exception e) {
@@ -1728,14 +1715,14 @@ public class KeyManagementSampleApplication extends JFrame {
     }
 
     private void ecdhGenerate() {
-        PublicKey aliceKey = null;
+        PublicKey aliceKey;
         try {
             String aliceKeyPem;
             if (ecdhAliceManualRadioButton.isSelected()) {
                 aliceKeyPem = ecdhAliceManual.getText();
             }
             else {
-                aliceKeyPem = new String(FileUtils.readBytesFromFile(ecdhAliceFile.getText()));
+                aliceKeyPem = new String(readBytesFromFile(ecdhAliceFile.getText()));
             }
             aliceKey = keyDecoder.getPublicKeyFromPEM(aliceKeyPem);
         }
@@ -1744,14 +1731,14 @@ public class KeyManagementSampleApplication extends JFrame {
             JOptionPane.showMessageDialog(KeyManagementSampleApplication.this, "Error trying to get Alice's public key for ECDH.\n\n" + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        PrivateKey bobKey = null;
+        PrivateKey bobKey;
         try {
             String bobKeyPem;
             if (ecdhBobManualRadioButton.isSelected()) {
                 bobKeyPem = ecdhBobManual.getText();
             }
             else {
-                bobKeyPem = new String(FileUtils.readBytesFromFile(ecdhBobFile.getText()));
+                bobKeyPem = new String(readBytesFromFile(ecdhBobFile.getText()));
             }
             bobKey = keyDecoder.getPrivateKeyFromPEM(bobKeyPem);
         }
@@ -1852,7 +1839,7 @@ public class KeyManagementSampleApplication extends JFrame {
                 pem = signPrivateKeyManual.getText();
             }
             else {
-                pem = new String(FileUtils.readBytesFromFile(signPrivateKeyFile.getText()));
+                pem = new String(readBytesFromFile(signPrivateKeyFile.getText()));
             }
             key = keyDecoder.getPrivateKeyFromPEM(pem);
         }
@@ -2060,7 +2047,7 @@ public class KeyManagementSampleApplication extends JFrame {
                 }
                 else {
                     try {
-                        iesData = FileUtils.readBytesFromFile(iesInputFileText);
+                        iesData = readBytesFromFile(iesInputFileText);
                     }
                     catch (IOException e) {
                         e.printStackTrace();
@@ -2076,7 +2063,7 @@ public class KeyManagementSampleApplication extends JFrame {
                         signingKey = keyDecoder.getPublicKeyFromPEM(iesSigningPrivateKeyTextText);
                     }
                     else {
-                        signingKey = keyDecoder.getPublicKeyFromPEM(new String(FileUtils.readBytesFromFile(iesSigningPrivateKeyPemFileText)));
+                        signingKey = keyDecoder.getPublicKeyFromPEM(new String(readBytesFromFile(iesSigningPrivateKeyPemFileText)));
                     }
                 }
                 catch (Exception e) {
@@ -2092,7 +2079,7 @@ public class KeyManagementSampleApplication extends JFrame {
                         derivationKey = keyDecoder.getPrivateKeyFromPEM(iesDerivationPublicKeyTextText);
                     }
                     else {
-                        derivationKey = keyDecoder.getPrivateKeyFromPEM(new String(FileUtils.readBytesFromFile(iesDerivationPublicKeyPemFileText)));
+                        derivationKey = keyDecoder.getPrivateKeyFromPEM(new String(readBytesFromFile(iesDerivationPublicKeyPemFileText)));
                     }
                 }
                 catch (Exception e) {
@@ -2134,7 +2121,7 @@ public class KeyManagementSampleApplication extends JFrame {
                         iesOutputText.setText(new String(get(), CHARSET));
                     }
                     else {
-                        FileUtils.writeToFile(iesOutputFile.getText(), get());
+                        writeToFile(iesOutputFile.getText(), get());
                     }
                 }
                 catch (Exception e) {
@@ -2186,7 +2173,7 @@ public class KeyManagementSampleApplication extends JFrame {
                 }
                 else {
                     try {
-                        plaintext = FileUtils.readBytesFromFile(iesInputFileText);
+                        plaintext = readBytesFromFile(iesInputFileText);
                     }
                     catch (IOException e) {
                         e.printStackTrace();
@@ -2202,7 +2189,7 @@ public class KeyManagementSampleApplication extends JFrame {
                         signingKey = keyDecoder.getPrivateKeyFromPEM(iesSigningPrivateKeyTextText);
                     }
                     else {
-                        signingKey = keyDecoder.getPrivateKeyFromPEM(new String(FileUtils.readBytesFromFile(iesSigningPrivateKeyPemFileText)));
+                        signingKey = keyDecoder.getPrivateKeyFromPEM(new String(readBytesFromFile(iesSigningPrivateKeyPemFileText)));
                     }
                 }
                 catch (Exception e) {
@@ -2218,7 +2205,7 @@ public class KeyManagementSampleApplication extends JFrame {
                         derivationKey = keyDecoder.getPublicKeyFromPEM(iesDerivationPublicKeyTextText);
                     }
                     else {
-                        derivationKey = keyDecoder.getPublicKeyFromPEM(new String(FileUtils.readBytesFromFile(iesDerivationPublicKeyPemFileText)));
+                        derivationKey = keyDecoder.getPublicKeyFromPEM(new String(readBytesFromFile(iesDerivationPublicKeyPemFileText)));
                     }
                 }
                 catch (Exception e) {
@@ -2231,7 +2218,7 @@ public class KeyManagementSampleApplication extends JFrame {
                 byte[] data;
                 if (iesUseECCHelperCheckBox.isSelected()) {
                     try {
-                        data = eccHelper.absioIESEncrypt(plaintext, new IndexedECPrivateKey(signingKey, 0, true, KeyType.Signing), new IndexedECPublicKey(derivationKey, 0, true, KeyType.Derivation), senderId, objectId);
+                        data = eccHelper.absioIESEncrypt(plaintext, new IndexedECPrivateKey(signingKey, 0, true, KeyType.SIGNING), new IndexedECPublicKey(derivationKey, 0, true, KeyType.DERIVATION), senderId, objectId);
                     }
                     catch (Exception e) {
                         e.printStackTrace();
@@ -2241,7 +2228,7 @@ public class KeyManagementSampleApplication extends JFrame {
                 }
                 else {
                     try {
-                        data = iesHelper.encrypt(plaintext, new IndexedECPrivateKey(signingKey, 0, true, KeyType.Signing), new IndexedECPublicKey(derivationKey, 0, true, KeyType.Derivation), senderId, objectId);
+                        data = iesHelper.encrypt(plaintext, new IndexedECPrivateKey(signingKey, 0, true, KeyType.SIGNING), new IndexedECPublicKey(derivationKey, 0, true, KeyType.DERIVATION), senderId, objectId);
                     }
                     catch (Exception e) {
                         e.printStackTrace();
@@ -2261,7 +2248,7 @@ public class KeyManagementSampleApplication extends JFrame {
                         iesOutputText.setText(DatatypeConverter.printHexBinary(get()));
                     }
                     else {
-                        FileUtils.writeToFile(iesOutputFile.getText(), get());
+                        writeToFile(iesOutputFile.getText(), get());
                     }
                 }
                 catch (Exception e) {
@@ -2329,7 +2316,7 @@ public class KeyManagementSampleApplication extends JFrame {
             return;
         }
 
-        int keySize = 0;
+        int keySize;
         try {
             keySize = Integer.parseInt(kdfKeySize.getText());
         }
@@ -2501,9 +2488,6 @@ public class KeyManagementSampleApplication extends JFrame {
     private void pbkdf2Decrypt() {
         final String password = pbkdf2Password.getText();
         final String interationCountString = pbkdf2Iterations.getText();
-        final boolean saltText = pdkdf2SaltTextRadioButton.isSelected();
-        final String saltTextText = pbkdf2SaltText.getText();
-        final String saltHexText = pbkdf2SaltHex.getText();
         final boolean manualInput = pdkdf2InputManualRadioButton.isSelected();
         final boolean manualOutput = pdkdf2OutputManualRadioButton.isSelected();
         final String manualInputText = pdkdf2InputManual.getText();
@@ -2518,10 +2502,10 @@ public class KeyManagementSampleApplication extends JFrame {
                     input = DatatypeConverter.parseHexBinary(manualInputText);
                 }
                 else {
-                    input = FileUtils.readBytesFromFile(fileInputText);
+                    input = readBytesFromFile(fileInputText);
                 }
 
-                int iterations = 0;
+                int iterations;
                 try {
                     iterations = Integer.parseInt(interationCountString);
                 }
@@ -2535,7 +2519,7 @@ public class KeyManagementSampleApplication extends JFrame {
                     byte[] output = pdkdf2Helper.decryptFromFormat(input, password, iterations);
 
                     if (!manualOutput) {
-                        FileUtils.writeToFile(fileLOutputText, output);
+                        writeToFile(fileLOutputText, output);
                     }
 
                     return output;
@@ -2600,10 +2584,10 @@ public class KeyManagementSampleApplication extends JFrame {
                     input = manualInputText.getBytes(CHARSET);
                 }
                 else {
-                    input = FileUtils.readBytesFromFile(fileInputText);
+                    input = readBytesFromFile(fileInputText);
                 }
 
-                int iterations = 0;
+                int iterations;
                 try {
                     iterations = Integer.parseInt(interationCountString);
                 }
@@ -2617,7 +2601,7 @@ public class KeyManagementSampleApplication extends JFrame {
                     byte[] output = pdkdf2Helper.encryptToFormat(input, salt, password, iterations);
 
                     if (!manualOutput) {
-                        FileUtils.writeToFile(fileLOutputText, output);
+                        writeToFile(fileLOutputText, output);
                     }
 
                     return output;
@@ -2663,7 +2647,7 @@ public class KeyManagementSampleApplication extends JFrame {
         SwingWorker worker = new SwingWorker<byte[], Void>() {
             @Override
             protected byte[] doInBackground() throws Exception {
-                int iterations = 0;
+                int iterations;
                 try {
                     iterations = Integer.parseInt(interationCountString);
                 }
@@ -2686,7 +2670,7 @@ public class KeyManagementSampleApplication extends JFrame {
                 byte[] key = pdkdf2Helper.generateDerivedKey(password, salt, iterations);
 
                 if (!manualOutput) {
-                    FileUtils.writeToFile(fileLOutputText, key);
+                    writeToFile(fileLOutputText, key);
                 }
 
                 return key;
@@ -2712,6 +2696,12 @@ public class KeyManagementSampleApplication extends JFrame {
         worker.execute();
     }
 
+    private byte[] readBytesFromFile(String path) throws IOException {
+        try (FileInputStream fileInputStream = new FileInputStream(new File(path))) {
+            return ByteUtils.readBytes(fileInputStream);
+        }
+    }
+
     private void saveAFile(JTextComponent component) {
         JFileChooser chooser = new JFileChooser();
         setStartingLocation(chooser, component);
@@ -2733,8 +2723,7 @@ public class KeyManagementSampleApplication extends JFrame {
                     startingFileLocation = file.getParentFile();
                 }
             }
-            catch (Exception e) {
-                startingFileLocation = null;
+            catch (Exception ignored) {
             }
         }
 
@@ -3474,10 +3463,7 @@ public class KeyManagementSampleApplication extends JFrame {
         try {
             cipherHelper = new CipherHelper();
         }
-        catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        catch (NoSuchPaddingException e) {
+        catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
             e.printStackTrace();
         }
 
@@ -3486,14 +3472,14 @@ public class KeyManagementSampleApplication extends JFrame {
         setUpSymmetricDecrypt();
     }
 
-    public void startWaitCursor() {
+    private void startWaitCursor() {
         RootPaneContainer root = this;
         root.getGlassPane().setCursor(WAIT_CURSOR);
         root.getGlassPane().addMouseListener(mouseAdapter);
         root.getGlassPane().setVisible(true);
     }
 
-    public void stopWaitCursor() {
+    private void stopWaitCursor() {
         RootPaneContainer root = this;
         root.getGlassPane().setCursor(DEFAULT_CURSOR);
         root.getGlassPane().removeMouseListener(mouseAdapter);
@@ -3519,12 +3505,12 @@ public class KeyManagementSampleApplication extends JFrame {
                         ciphertext = DatatypeConverter.parseHexBinary(decryptInputHexText);
                     }
                     else {
-                        ciphertext = FileUtils.readBytesFromFile(decryptInputFileText);
+                        ciphertext = readBytesFromFile(decryptInputFileText);
                     }
 
                     final byte[] data = cipherHelper.decrypt(key, iv, ciphertext);
                     if (decryptOutputFileRadioButtonSelected) {
-                        FileUtils.writeToFile(decryptOutputFileText, data);
+                        writeToFile(decryptOutputFileText, data);
                     }
                     else {
                         SwingUtilities.invokeLater(new Runnable() {
@@ -3576,12 +3562,12 @@ public class KeyManagementSampleApplication extends JFrame {
                         data = encryptedInputTextString.getBytes(CHARSET);
                     }
                     else {
-                        data = FileUtils.readBytesFromFile(encryptInputFile.getText());
+                        data = readBytesFromFile(encryptInputFile.getText());
                     }
 
                     final byte[] encrypted = cipherHelper.encrypt(key, iv, data);
                     if (encryptOutputFileRadioButtonSelected) {
-                        FileUtils.writeToFile(encryptOutputFileText, encrypted);
+                        writeToFile(encryptOutputFileText, encrypted);
                     }
                     else {
                         final String printHexBinary = DatatypeConverter.printHexBinary(encrypted);
@@ -3608,5 +3594,14 @@ public class KeyManagementSampleApplication extends JFrame {
         };
         startWaitCursor();
         worker.execute();
+    }
+
+    private void writeToFile(String path, byte[] bytes) throws IOException {
+        Path dir = Paths.get(path);
+        Files.createDirectories(dir.getParent());
+        try (FileOutputStream fileOutputStream = new FileOutputStream(dir.toFile())) {
+            fileOutputStream.write(bytes);
+            fileOutputStream.flush();
+        }
     }
 }
