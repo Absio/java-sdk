@@ -1,0 +1,1 @@
+* Modified project to compile against Sqlite built with Sqlite Encryption Extension (SEE)
