@@ -264,5 +264,6 @@ Please contact us at [support@absio.com](mailto:support@absio.com) if you experi
 Please use the relevant [GitHub](https://github.com/Absio/) Issue Tracker to report any bugs.
 * [**Java SDK** - *https://github.com/Absio/java-sdk/issues*](https://github.com/Absio/java-sdk/issues)
 
-# License
+# Licenses
 Visit the Absio documentation website to read the [Software License Agreement](http://docs.absio.com/#licenselicense).
+Visit the Java SDK repository for relevant [third-party license information](https://github.com/Absio/java-sdk/tree/master/licenses).
