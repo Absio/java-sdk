@@ -1,0 +1,37 @@
+// Test the ServerProvider
+init-server --url https://apiint.absio.com --api-key 7b86390a-38af-4ecc-b9b7-2c663ab39bea --app-name java-sdk-examples
+register --password password1 --passphrase passphrase1 --reminder reminder
+get-reminder
+change-credentials --password password2 --passphrase passphrase2 --reminder reminder2
+get-reminder
+create-container --file test.script --id d194f049-8f5a-4996-bbcc-eac069816001
+get-container-info --id d194f049-8f5a-4996-bbcc-eac069816001
+update-container --id d194f049-8f5a-4996-bbcc-eac069816001 
+get-container-info --id d194f049-8f5a-4996-bbcc-eac069816001
+delete-container --id d194f049-8f5a-4996-bbcc-eac069816001
+get-events
+delete-user
+
+// Test the OfsProvider
+init-ofs --root-directory . --partition-by-user
+register --password password1 --passphrase passphrase1 --reminder reminder
+change-credentials --password password2 --passphrase passphrase2 --reminder reminder2
+create-container --file test.script --id d194f049-8f5a-4996-bbcc-eac069816001
+get-container-info --id d194f049-8f5a-4996-bbcc-eac069816001
+update-container --id d194f049-8f5a-4996-bbcc-eac069816001 
+get-container-info --id d194f049-8f5a-4996-bbcc-eac069816001
+delete-container --id d194f049-8f5a-4996-bbcc-eac069816001
+delete-user
+
+// Test the ServerCacheOfsProvider
+init-server-cache-ofs --url https://apiint.absio.com --api-key 7b86390a-38af-4ecc-b9b7-2c663ab39bea --app-name java-sdk-examples --root-directory . --partition-by-user
+register --password password1 --passphrase passphrase1 --reminder reminder
+change-credentials --password password2 --passphrase passphrase2 --reminder reminder2
+get-reminder
+create-container --file test.script --id d194f049-8f5a-4996-bbcc-eac069816001
+get-container-info --id d194f049-8f5a-4996-bbcc-eac069816001
+update-container --id d194f049-8f5a-4996-bbcc-eac069816001 
+get-container-info --id d194f049-8f5a-4996-bbcc-eac069816001
+delete-container --id d194f049-8f5a-4996-bbcc-eac069816001
+get-events
+delete-user

@@ -40,4 +40,10 @@ The user management shell uses [Spring Shell](https://projects.spring.io/spring-
     ```
 
 ## Invoking Commands
-The shell provides a variety of commands for working with the Absio SDK and Broker server. For a full list of commands, use the "help" command to get more information. All commands are disabled until "initialize" is called, and most other commands cannot be accessed until authenticated via "register" or "login".
+The shell provides a variety of commands for working with the Absio SDK and Broker server. For a full list of commands, use the "help" command to get more information. All commands are disabled until the session has been initialized (see #Selecting a Provider), and most other commands cannot be accessed until authenticated via "register" or "login".
+
+## Selecting a Provider
+Before the shell can be utilized, a data provider must be initialized: the server-only provider (see command "init-server"), OFS-only provider (see command "init-ofs"), or server-provider with a local OFS cache (see command "init-server-cache-ofs").
+
+## Running the Test Script
+The source code contains a test script for previewing the major commands against all three providers. The script can be run from the shell with ```script test.script```.

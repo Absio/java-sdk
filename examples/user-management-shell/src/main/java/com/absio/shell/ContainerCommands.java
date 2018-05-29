@@ -1,10 +1,10 @@
 package com.absio.shell;
 
 import com.absio.broker.BrokerException;
-import com.absio.broker.mapper.ContainerInfo;
-import com.absio.container.*;
-import com.absio.provider.ServerProvider;
-import com.absio.util.FileUtils;
+import com.absio.container.Access;
+import com.absio.container.Container;
+import com.absio.container.Metadata;
+import com.absio.container.Permission;
 import com.absio.util.GeneralUtils;
 import com.absio.util.StringUtils;
 import org.springframework.shell.Availability;
@@ -14,6 +14,9 @@ import org.threeten.bp.ZonedDateTime;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -22,15 +25,30 @@ import java.util.UUID;
 @ShellComponent
 @ShellCommandGroup("4. Container Commands")
 public class ContainerCommands {
-    public static final String FILE_TYPE = "File";
+    private static final String FILE_TYPE = "File";
+
+    private boolean accessListContainsUser(List<Access> accessList, UUID userId) {
+        if (accessList != null) {
+            for (Access access : accessList) {
+                if (GeneralUtils.equals(userId, access.getUserId())) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     @ShellMethodAvailability("*")
-    public Availability containerMethodAvailabilityCheck() {
-        return AbsioServerProvider.INSTANCE.isAuthenticated() ? Availability.available() : Availability.unavailable("The session must be authenticated.");
+    public Availability containerMethodAvailabilityCheck() throws IllegalAccessException {
+        return AbsioProvider.INSTANCE.isAuthenticated() ? Availability.available() : Availability.unavailable("The session must be authenticated.");
     }
 
     @ShellMethod("Encrypts a file to a SecuredContainer and uploads it to the Absio Broker server.")
-    public String createContainer(String file, @ShellOption(defaultValue = FILE_TYPE) String type, @ShellOption(defaultValue = ShellOption.NULL) String header) throws Exception {
-        UUID id = UUID.randomUUID();
+    public String createContainer(String file, @ShellOption(defaultValue = FILE_TYPE) String type, @ShellOption(defaultValue = ShellOption.NULL) String header, @ShellOption(defaultValue = ShellOption.NULL) UUID id) throws Exception {
+        if (id == null) {
+            id = UUID.randomUUID();
+        }
         Metadata metadata = new Metadata(id);
         metadata.setType(type);
         if (header == null && FILE_TYPE.equals(type)) {
@@ -38,39 +56,31 @@ public class ContainerCommands {
             header = theFile.getName();
         }
 
-        ServerProvider provider = AbsioServerProvider.INSTANCE;
-
         List<Access> accessList = new ArrayList<>();
-        Access selfAccess = new Access(provider.getUserId(), Permission.DEFAULT_OWNER_PERMISSIONS);
+        Access selfAccess = new Access(AbsioProvider.INSTANCE.getUserId(), Permission.DEFAULT_OWNER_PERMISSIONS);
         accessList.add(selfAccess);
         if (ShellUtils.promptForYesOrNo("Add additional recipients? Yes/No")) {
             promptForAccessList(accessList);
         }
         metadata.setAccesses(accessList);
 
-        Container container = new Container(metadata, FileUtils.readBytesFromFile(file), header);
+        Container container = new Container(metadata, Files.readAllBytes(Paths.get(file)), header);
 
-        EncryptionHelper helper = new EncryptionHelper(provider.getKeyRing(), provider.getPublicKeyMapper());
-        SecuredContainer securedContainer = helper.encrypt(container);
-
-        AbsioServerProvider.INSTANCE.createOrUpdate(securedContainer);
+        AbsioProvider.INSTANCE.createOrUpdateContainer(container);
         return String.format("Container created successfully : %s", id.toString());
     }
 
     @ShellMethod("Deletes a SecuredContainer from the Absio Broker server.")
-    public String deleteContainer(UUID id) throws InterruptedException, BrokerException, IllegalAccessException, IOException {
-        AbsioServerProvider.INSTANCE.delete(id);
+    public String deleteContainer(UUID id) throws InterruptedException, BrokerException, IllegalAccessException, IOException, SQLException {
+        AbsioProvider.INSTANCE.deleteContainer(id);
         return String.format("Container deleted successfully : %s", id);
     }
 
     @ShellMethod("Gets a SecuredContainer from the Absio Broker server and decrypts it to a file.")
     public Table getContainer(UUID id, String filePath) throws Exception {
-        SecuredContainer securedContainer = AbsioServerProvider.INSTANCE.get(id);
+        Container container = AbsioProvider.INSTANCE.getContainer(id);
 
-        EncryptionHelper helper = new EncryptionHelper(AbsioServerProvider.INSTANCE.getKeyRing(), AbsioServerProvider.INSTANCE.getPublicKeyMapper());
-        Container container = helper.decrypt(securedContainer);
-
-        FileUtils.writeToFile(filePath, container.getContent());
+        Files.write(Paths.get(filePath), container.getContent());
 
         System.out.println("Container : " + id);
         System.out.println("CustomData : " + container.getCustomData());
@@ -78,10 +88,10 @@ public class ContainerCommands {
     }
 
     @ShellMethod("Gets the SecuredContainer information from the Absio Broker server.")
-    public Table getContainerInfo(UUID id) throws InterruptedException, BrokerException, IllegalAccessException, IOException {
-        ContainerInfo info = AbsioServerProvider.INSTANCE.getInfo(id);
+    public Table getContainerInfo(UUID id) throws InterruptedException, BrokerException, IllegalAccessException, IOException, SQLException {
+        AbsioProvider.ShellContainerInfo info = AbsioProvider.INSTANCE.getContainerInfo(id);
         System.out.println("Container : " + id);
-        return printMetadata(info.getMetadata());
+        return printContainerInfo(info);
     }
 
     private Table printAccesses(List<Access> accesses) {
@@ -96,6 +106,20 @@ public class ContainerCommands {
         TableModel model = new BeanListTableModel<>(accesses, headers);
         TableBuilder tableBuilder = new TableBuilder(model);
         return tableBuilder.addFullBorder(BorderStyle.oldschool).build();
+    }
+
+    private Table printContainerInfo(AbsioProvider.ShellContainerInfo containerInfo) {
+        if (containerInfo.getOfsLocation() != null) {
+            System.out.println("OFS Location : " + containerInfo.getOfsLocation());
+        }
+        if (containerInfo.getSyncedAt() != null) {
+            System.out.println("Synced at : " + containerInfo.getSyncedAt());
+        }
+        if (containerInfo.getUrl() != null) {
+            System.out.println("Storage URL : " + containerInfo.getUrl());
+        }
+        Metadata metadata = containerInfo.getMetadata();
+        return printMetadata(metadata);
     }
 
     private Table printMetadata(Metadata metadata) {
@@ -143,12 +167,7 @@ public class ContainerCommands {
 
     @ShellMethod("Updates a SecuredContainer on the Absio Broker server with new type, header, content, or access.")
     public String updateContainer(UUID id, @ShellOption(defaultValue = ShellOption.NULL) String file, @ShellOption(defaultValue = ShellOption.NULL) String type, @ShellOption(defaultValue = ShellOption.NULL) String header) throws Exception {
-        ServerProvider provider = AbsioServerProvider.INSTANCE;
-
-        SecuredContainer serverContainer = provider.get(id);
-        EncryptionHelper helper = new EncryptionHelper(provider.getKeyRing(), provider.getPublicKeyMapper());
-
-        Container container = helper.decrypt(serverContainer);
+        Container container = AbsioProvider.INSTANCE.getContainer(id);
         boolean typeChanged = false;
 
         if (file != null) {
@@ -168,7 +187,7 @@ public class ContainerCommands {
         }
 
         if (file != null && !file.equals(ShellOption.NONE)) {
-            container.setContent(FileUtils.readBytesFromFile(file));
+            container.setContent(Files.readAllBytes(Paths.get(file)));
         }
 
         if (header != null && !header.equals(ShellOption.NONE)) {
@@ -176,53 +195,30 @@ public class ContainerCommands {
         }
 
         boolean changeAccess = ShellUtils.promptForYesOrNo("Change recipients? Yes/No");
-        Keys keys = null;
         if (changeAccess) {
-            keys = helper.findSecuredContainerKeys(serverContainer.getMetadata());
             List<Access> accessList = new ArrayList<>();
             promptForAccessList(accessList);
-            if (!accessListContainsUser(accessList, provider.getUserId())) {
-                Access selfAccess = new Access(provider.getUserId(), Permission.DEFAULT_OWNER_PERMISSIONS);
+            if (!accessListContainsUser(accessList, AbsioProvider.INSTANCE.getUserId())) {
+                Access selfAccess = new Access(AbsioProvider.INSTANCE.getUserId(), Permission.DEFAULT_OWNER_PERMISSIONS);
                 accessList.add(selfAccess);
             }
             metadata.setAccesses(accessList);
         }
 
-        SecuredContainer securedContainer = null;
-
-        if (file != null) {
-            securedContainer = helper.encrypt(container);
-        }
-        else if (changeAccess) {
-            helper.initializeAccessLevelsKeyBlobAsync(metadata.getAccesses(), id, keys);
-        }
-
         if (file != null && changeAccess) {
-            AbsioServerProvider.INSTANCE.createOrUpdate(securedContainer);
+            AbsioProvider.INSTANCE.updateContainer(container);
         }
         else {
             if (typeChanged) {
-                AbsioServerProvider.INSTANCE.updateType(id, type);
+                AbsioProvider.INSTANCE.updateType(id, type);
             }
             if (changeAccess) {
-                AbsioServerProvider.INSTANCE.updateAccess(id, metadata.getAccesses());
+                AbsioProvider.INSTANCE.updateAccess(id, metadata.getAccesses());
             }
             if (file != null) {
-                AbsioServerProvider.INSTANCE.updateData(securedContainer);
+                AbsioProvider.INSTANCE.updateContent(id, container.getContent());
             }
         }
         return String.format("Container updated successfully : %s", id.toString());
-    }
-
-    private boolean accessListContainsUser(List<Access> accessList, UUID userId) {
-        if (accessList != null) {
-            for (Access access : accessList) {
-                if (GeneralUtils.equals(userId, access.getUserId())) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
     }
 }

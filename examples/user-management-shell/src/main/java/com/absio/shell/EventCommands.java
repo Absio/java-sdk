@@ -19,14 +19,31 @@ import java.util.UUID;
 @ShellCommandGroup("5. Event Commands")
 public class EventCommands {
     @ShellMethodAvailability("*")
-    public Availability eventMethodAvailabilityCheck() {
-        return AbsioServerProvider.INSTANCE.isAuthenticated() ? Availability.available() : Availability.unavailable("The session must be authenticated.");
+    public Availability eventMethodAvailabilityCheck() throws IllegalAccessException {
+        return AbsioProvider.INSTANCE.isAuthenticated() ? Availability.available() : Availability.unavailable("The session must be authenticated.");
     }
 
     @ShellMethod("Gets all events that match the event type, action type, starting ID, ending ID, container ID, and type.")
     public String getEvents(@ShellOption(defaultValue = ShellOption.NULL, help = "{ACCESSED | ADDED | DELETED | UPDATED}") EventActionType actionType, @ShellOption(defaultValue = ShellOption.NULL, help = "{CONTAINER | KEYS_FILE}") EventType eventType, @ShellOption(defaultValue = ShellOption.NULL) Long startingId, @ShellOption(defaultValue = ShellOption.NULL) Long endingId, @ShellOption(defaultValue = ShellOption.NULL) UUID containerId, @ShellOption(defaultValue = ShellOption.NULL) String containerType) throws InterruptedException, BrokerException, IllegalAccessException, IOException {
-        EventPackage events = AbsioServerProvider.INSTANCE.getEvents(actionType, eventType, startingId, endingId, containerId, containerType);
+        EventPackage events = AbsioProvider.INSTANCE.getEvents(actionType, eventType, startingId, endingId, containerId, containerType);
         return printEvents(events);
+    }
+
+    private Table printContainerEvents(List<AbstractEvent> eventList) {
+        LinkedHashMap<String, Object> headers = new LinkedHashMap<>();
+        headers.put("id", "Event ID");
+        headers.put("date", "Date");
+        headers.put("eventType", "Event Type");
+        headers.put("clientAppName", "Client App Name");
+        headers.put("containerId", "Container ID");
+        headers.put("userId", "User ID");
+        headers.put("type", "Type");
+        headers.put("expiredAt", "Expired At");
+        headers.put("modifiedAt", "Modified At");
+        headers.put("changesJson", "Changes");
+        TableModel model = new BeanListTableModel<>(eventList, headers);
+        TableBuilder tableBuilder = new TableBuilder(model);
+        return tableBuilder.addFullBorder(BorderStyle.oldschool).build();
     }
 
     private String printEvents(EventPackage events) {
@@ -47,23 +64,6 @@ public class EventCommands {
         Table two = printKeyFileEvents(keyFileEvents);
 
         return "\nContainer Events\n" + one.render(80) + "\n\nKey File Events\n" + two.render(80);
-    }
-
-    private Table printContainerEvents(List<AbstractEvent> eventList) {
-        LinkedHashMap<String, Object> headers = new LinkedHashMap<>();
-        headers.put("id", "Event ID");
-        headers.put("date", "Date");
-        headers.put("eventType", "Event Type");
-        headers.put("clientAppName", "Client App Name");
-        headers.put("containerId", "Container ID");
-        headers.put("userId", "User ID");
-        headers.put("type", "Type");
-        headers.put("expiredAt", "Expired At");
-        headers.put("modifiedAt", "Modified At");
-        headers.put("changesJson", "Changes");
-        TableModel model = new BeanListTableModel<>(eventList, headers);
-        TableBuilder tableBuilder = new TableBuilder(model);
-        return tableBuilder.addFullBorder(BorderStyle.oldschool).build();
     }
 
     private Table printKeyFileEvents(List<AbstractEvent> eventList) {

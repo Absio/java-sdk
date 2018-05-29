@@ -10,16 +10,34 @@ public class CustomPromptProvider implements PromptProvider {
 
     @Override
     public AttributedString getPrompt() {
-        if (AbsioServerProvider.INSTANCE.isAuthenticated()) {
-            return new AttributedString(AbsioServerProvider.INSTANCE.getUserId() + ":>",
-                    AttributedStyle.DEFAULT.foreground(AttributedStyle.YELLOW));
+        try {
+            if (AbsioProvider.INSTANCE.isAuthenticated()) {
+                return new AttributedString(AbsioProvider.INSTANCE.getUserId() + ":>",
+                        AttributedStyle.DEFAULT.foreground(AttributedStyle.YELLOW));
+            }
+            else if (AbsioProvider.INSTANCE.isInitialized()) {
+                return new AttributedString("absio-" + getProviderTypeInitials() + ":>", AttributedStyle.DEFAULT.foreground(AttributedStyle.YELLOW));
+            }
+            else {
+                return new AttributedString("shell:>", AttributedStyle.DEFAULT.foreground(AttributedStyle.YELLOW));
+            }
         }
-        else if (AbsioServerProvider.INSTANCE.isInitialized()) {
-            return new AttributedString("absio" + ":>", AttributedStyle.DEFAULT.foreground(AttributedStyle.YELLOW));
+        catch (IllegalAccessException e) {
+            e.printStackTrace();
         }
-        else {
-            return new AttributedString("shell:>", AttributedStyle.DEFAULT.foreground(AttributedStyle.YELLOW));
-        }
+        return null;
         //initialize https://apidev.absio.com 62883408-7ff0-49c4-a48e-f3146891b486 | login --user-id fa49c241-c208-40f4-8d85-58a2d27e42b4 --passphrase passphrase#2
+    }
+
+    private String getProviderTypeInitials() {
+        switch (AbsioProvider.INSTANCE.getProviderType()) {
+            case SERVER:
+                return "SP";
+            case SERVER_CACHE_OFS:
+                return "SCOP";
+            case OFS:
+                return "OP";
+        }
+        return null;
     }
 }
