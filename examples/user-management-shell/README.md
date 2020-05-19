@@ -32,7 +32,7 @@ The user management shell uses [Spring Shell](https://projects.spring.io/spring-
     ```
 1. Compile the user management shell JAR
     ```
-    ./mvnw clean install -DskipTests
+    ./mvnw -U -s .m2/settings.xml --batch-mode clean package -DskipTests
     ```
 1. Run the user management shell
     ```
