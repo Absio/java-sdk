@@ -31,7 +31,7 @@ Since there is no easy way to enter or display binary data, most of the inputs/o
     ```
 1. Compile the key management application JAR
     ```
-    mvn clean package
+    mvn -U -s .m2/settings.xml --batch-mode clean package
     ```
 1. Run the key management application
     ```
