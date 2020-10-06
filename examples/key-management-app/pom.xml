@@ -6,7 +6,7 @@
 
     <groupId>com.absio</groupId>
     <artifactId>key-management-app</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <packaging>jar</packaging>
 
     <repositories>
@@ -15,12 +15,12 @@
             <url>https://nexus.absio.com/repository/maven-releases/</url>
         </repository>
         <repository>
-            <id>absio-intnexus-stage</id>
-            <url>https://intnexus.absio.com/repository/maven-stage/</url>
+            <id>absio-nexus-stage</id>
+            <url>https://nexus.absio.com/repository/maven-stage/</url>
         </repository>
         <repository>
-            <id>absio-intnexus</id>
-            <url>https://intnexus.absio.com/repository/maven-snapshots/</url>
+            <id>absio-nexus-snapshots</id>
+            <url>https://nexus.absio.com/repository/maven-snapshots/</url>
         </repository>
     </repositories>
 
@@ -89,7 +89,7 @@
         <dependency>
             <groupId>com.absio</groupId>
             <artifactId>absio-sdk</artifactId>
-            <version>1.5.1</version>
+            <version>1.5.2</version>
         </dependency>
         <dependency>
             <groupId>org.conscrypt</groupId>

@@ -43,12 +43,12 @@ Through maven you can include the SDK dependency.
             <version>SDK_VERSION_NUMBER</version>
         </dependency>
 ~~~
-For 1.5.1 it would be
+For 1.5.2 it would be
 ~~~
         <dependency>
             <groupId>com.absio</groupId>
             <artifactId>absio-sdk</artifactId>
-            <version>1.5.1</version>
+            <version>1.5.2</version>
         </dependency>
 ~~~
 
