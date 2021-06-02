@@ -36,10 +36,10 @@ Since there is no easy way to enter or display binary data, most of the inputs/o
 1. Run the key management application
     ```
     //32-Bit JDK
-    java -jar target/key-management-app-0.0.1-SNAPSHOT-windows_x86_32
+    java -jar target/key-management-app-0.0.2-windows-x86_32.jar
         
     //64-Bit JDK
-    java -jar target/key-management-app-0.0.1-SNAPSHOT-windows_x86_64
+    java -jar target/key-management-app-0.0.2-windows-x86_64.jar
     ```
 
 ## Usage
