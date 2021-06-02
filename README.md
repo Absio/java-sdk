@@ -19,7 +19,7 @@ This Quick start guide is intended to help you begin playing around with the Abs
 **Want to dig deeper into the Absio SDKs?**   See our complete **[API documentation](https://absio.github.io/java-sdk/)**.
 
 ## Java
-This SDK was written with the Java 7 language level, but was tested exclusively against Java 8.
+This SDK was written with the Java 7 language level, but was tested exclusively against Java 8.  This may not work for Java versions greater than 8.
 
 ### JCE
 Java uses the JCE to perform all cryptographic operations.  The SDK requires one modification to the JDK/JRE being used (for the JCE) as well as one initialization to ensure the JCE Absio depends on is used.

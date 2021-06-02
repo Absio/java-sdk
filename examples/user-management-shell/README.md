@@ -4,7 +4,7 @@
 The intent of this shell application is to show how to use the key features of the Absio SDK and its use with the Absio Broker application.
 
 ## Java
-This SDK was written with the Java 7 language level, but was tested exclusively against Java 8.
+This SDK was written with the Java 7 language level, but was tested exclusively against Java 8.  This may not work for Java versions greater than 8.
 
 ## Java Cryptography Extension (JCE) Unlimited Strength
 In order to use the SDK to perform any cryptography, the JDK/JRE must be updated for the [Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files](http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html)(this is for JDK 1.8).
@@ -15,9 +15,9 @@ The user management shell uses [Spring Shell](https://projects.spring.io/spring-
 
 ## Compiling and Running on Windows
 
-1. Java JDK 8+
-    1. Download and install [Java JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html) 8 or higher
-        1. If using JDK 8, install the [JCE Unlimited Strength Jurisdiction Policy Files](http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html)
+1. Java JDK 8
+    1. Download and install [Java JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html) 8 (we test with OpenJDK)
+        1. If using Oracle's JDK 8, install the [JCE Unlimited Strength Jurisdiction Policy Files](http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html)
     1. Create a JAVA_HOME environment variable and point it to the JDK installation folder (e.g. "C:\Program Files\Java\jdk1.8.0_161")
 1. Maven    
     1. Download and unpack [Maven](http://maven.apache.org/download.cgi) to a local folder
