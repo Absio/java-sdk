@@ -36,7 +36,7 @@ The user management shell uses [Spring Shell](https://projects.spring.io/spring-
     ```
 1. Run the user management shell
     ```
-    java -jar target/user-management-shell-0.0.2.jar
+    java -jar target/user-management-shell-1.0.0.jar
     ```
 
 ## Invoking Commands
