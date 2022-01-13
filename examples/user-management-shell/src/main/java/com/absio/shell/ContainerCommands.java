@@ -5,22 +5,18 @@ import com.absio.container.Access;
 import com.absio.container.Container;
 import com.absio.container.Metadata;
 import com.absio.container.Permission;
-import com.absio.util.GeneralUtils;
 import com.absio.util.StringUtils;
 import org.springframework.shell.Availability;
 import org.springframework.shell.standard.*;
 import org.springframework.shell.table.*;
-import org.threeten.bp.ZonedDateTime;
+import java.time.ZonedDateTime;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @ShellComponent
 @ShellCommandGroup("4. Container Commands")
@@ -30,7 +26,7 @@ public class ContainerCommands {
     private boolean accessListContainsUser(List<Access> accessList, UUID userId) {
         if (accessList != null) {
             for (Access access : accessList) {
-                if (GeneralUtils.equals(userId, access.getUserId())) {
+                if (Objects.equals(userId, access.getUserId())) {
                     return true;
                 }
             }
@@ -181,7 +177,7 @@ public class ContainerCommands {
         }
 
         Metadata metadata = container.getMetadata();
-        if (type != null && !type.equals(ShellOption.NONE) && !GeneralUtils.equals(metadata.getType(), type)) {
+        if (type != null && !type.equals(ShellOption.NONE) && !Objects.equals(metadata.getType(), type)) {
             typeChanged = true;
             metadata.setType(type);
         }
