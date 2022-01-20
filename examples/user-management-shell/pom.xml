@@ -42,7 +42,6 @@
         <!-- Absio modules -->
         <absio-sdk.version>1.6.0</absio-sdk.version>
         <absio-conscrypt-openjdk-uber.version>1.4.2</absio-conscrypt-openjdk-uber.version>
-        <absio-TSS.Java.version>0.3.2</absio-TSS.Java.version>
         <!-- / -->
         <spring-boot-starter.version>2.6.2</spring-boot-starter.version>
         <spring-shell-starter.version>2.0.1.RELEASE</spring-shell-starter.version>
