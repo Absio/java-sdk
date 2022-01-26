@@ -1,10 +1,10 @@
 # Key Management Sample Application	
 
 ## About
-The intent of this Swing application is to show how to use all of the features of the Key Management portion of the SDK.
+The intent of this Swing application is to show how to use all the features of the Key Management portion of the SDK.
 
 ## Java
-This SDK was written with the Java 8 language level, but was tested exclusively against Java 8.  However, this should work for Java versions greater than 8.
+This SDK was written with the Java 8 language level, but was tested exclusively against Java 8 and Java 11. This may not work for Java versions other than 8 or 11.
 
 ## Java Cryptography Extension (JCE) Unlimited Strength
 In order to use the SDK to perform any cryptography, the JDK/JRE must be updated for the [Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files](http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html)(this is for JDK 1.8).
