@@ -46,6 +46,7 @@
         <spring-boot-starter.version>2.6.2</spring-boot-starter.version>
         <spring-shell-starter.version>2.0.1.RELEASE</spring-shell-starter.version>
         <os-maven-plugin.version>1.7.0</os-maven-plugin.version>
+        <okhttp3.version>4.9.1</okhttp3.version>
     </properties>
 
     <dependencies>

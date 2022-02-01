@@ -1,9 +1,9 @@
 package com.absio.shell;
 
 import com.absio.broker.BrokerException;
-import com.absio.broker.mapper.ContainerInfo;
+import com.absio.broker.json.ContainerInfo;
 import com.absio.broker.mapper.EventActionType;
-import com.absio.broker.mapper.EventPackage;
+import com.absio.broker.json.EventPackage;
 import com.absio.broker.mapper.EventType;
 import com.absio.container.Access;
 import com.absio.container.Container;
