@@ -3,7 +3,7 @@ package com.absio.shell;
 import com.absio.broker.BrokerException;
 import com.absio.broker.mapper.AbstractEvent;
 import com.absio.broker.mapper.EventActionType;
-import com.absio.broker.mapper.EventPackage;
+import com.absio.broker.json.EventPackage;
 import com.absio.broker.mapper.EventType;
 import org.springframework.shell.Availability;
 import org.springframework.shell.standard.*;

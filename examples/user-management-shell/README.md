@@ -4,7 +4,7 @@
 The intent of this shell application is to show how to use the key features of the Absio SDK and its use with the Absio Broker application.
 
 ## Java
-This SDK was written with the Java 7 language level, but was tested exclusively against Java 8.  This may not work for Java versions greater than 8.
+This SDK was written with the Java 8 language level, but was tested exclusively against Java 8 and Java 11. This may not work for Java versions other than 8 or 11.
 
 ## Java Cryptography Extension (JCE) Unlimited Strength
 In order to use the SDK to perform any cryptography, the JDK/JRE must be updated for the [Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files](http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html)(this is for JDK 1.8).
@@ -36,7 +36,7 @@ The user management shell uses [Spring Shell](https://projects.spring.io/spring-
     ```
 1. Run the user management shell
     ```
-    java -jar target/user-management-shell-0.0.2.jar
+    java -jar target/user-management-shell-1.0.0.jar
     ```
 
 ## Invoking Commands

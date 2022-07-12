@@ -2,10 +2,13 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <prerequisites>
+        <maven>3.6.0</maven>
+    </prerequisites>
 
     <groupId>com.absio</groupId>
     <artifactId>user-management-shell</artifactId>
-    <version>0.0.2</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <name>user-management-shell</name>
@@ -14,51 +17,59 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.0.0.RELEASE</version>
+        <version>2.6.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <repositories>
         <repository>
             <id>absio-nexus</id>
-            <url>https://nexus.absio.com/repository/maven-releases/</url>
+            <url>https://intnexus.absio.com/repository/maven-releases/</url>
         </repository>
         <repository>
             <id>absio-nexus-stage</id>
-            <url>https://nexus.absio.com/repository/maven-stage/</url>
+            <url>https://intnexus.absio.com/repository/maven-stage/</url>
         </repository>
         <repository>
             <id>absio-nexus-snapshots</id>
-            <url>https://nexus.absio.com/repository/maven-snapshots/</url>
+            <url>https://intnexus.absio.com/repository/maven-snapshots/</url>
         </repository>
     </repositories>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>1.8</java.version>
+        <!-- Absio modules -->
+        <absio-sdk.version>1.6.0</absio-sdk.version>
+        <absio-conscrypt-openjdk-uber.version>1.4.2</absio-conscrypt-openjdk-uber.version>
+        <!-- / -->
+        <spring-boot-starter.version>2.6.2</spring-boot-starter.version>
+        <spring-shell-starter.version>2.0.1.RELEASE</spring-shell-starter.version>
+        <os-maven-plugin.version>1.7.0</os-maven-plugin.version>
+        <okhttp3.version>4.9.1</okhttp3.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.absio</groupId>
             <artifactId>absio-sdk</artifactId>
-            <version>1.5.3</version>
+            <version>${absio-sdk.version}</version>
         </dependency>
         <dependency>
             <groupId>org.conscrypt</groupId>
             <artifactId>absio-conscrypt-openjdk</artifactId>
-            <version>1.4.2</version>
+            <version>${absio-conscrypt-openjdk-uber.version}</version>
             <classifier>${os.detected.classifier}</classifier>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
+            <version>${spring-boot-starter.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.shell</groupId>
             <artifactId>spring-shell-starter</artifactId>
-            <version>2.0.0.RELEASE</version>
+            <version>${spring-shell-starter.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -77,7 +88,7 @@
             <extension>
                 <groupId>kr.motd.maven</groupId>
                 <artifactId>os-maven-plugin</artifactId>
-                <version>1.4.1.Final</version>
+                <version>${os-maven-plugin.version}</version>
             </extension>
         </extensions>
         <plugins>
